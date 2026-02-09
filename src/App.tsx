@@ -21,7 +21,7 @@ function App() {
           } />
           <Route path="*" element={<Navigate to={auth.isAuthenticated ? "/products" : "/login"} replace />} />
         </Routes>
-Ы    </Router>
+    </Router>
   );
 }
 

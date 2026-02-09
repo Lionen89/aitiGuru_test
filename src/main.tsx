@@ -6,6 +6,9 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './react-query';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/700.css';
 import './index.css';
 import App from './App.tsx';
 
@@ -20,6 +23,15 @@ const theme = createTheme({
     background: {
       default: '#fff',
     },
+  },
+  typography: {
+    fontFamily: [
+      'Inter',
+      'Roboto',
+      'Helvetica',
+      'Arial',
+      'sans-serif'
+    ].join(','),
   },
 });
 

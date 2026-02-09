@@ -3,7 +3,7 @@ import { useAppDispatch } from "../store";
 import { loginSuccess, loginFailure } from "../store/authSlice";
 import { authApi } from "../services/api";
 import type { LoginRequest } from "../types";
-import { Typography, TextField, Button, FormControlLabel, Checkbox, Box, Alert, Link, InputAdornment, IconButton } from "@mui/material";
+import { Typography, TextField, Button, FormControlLabel, Checkbox, Box, Alert, Link, InputAdornment, IconButton, Tooltip } from "@mui/material";
 import { useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -12,23 +12,21 @@ import { Visibility, VisibilityOff, Email, Lock, Close } from "@mui/icons-materi
 import { styled } from "@mui/material/styles";
 import logo from "../assets/logo.svg";
 
-// Стилизованная оболочка для формы
 const FormContainer = styled(Box)(({ theme }) => ({
-	padding: theme.spacing(4),
+	padding: '48px 58px',
 	borderRadius: 16,
 	boxShadow: "0 4px 20px rgba(0, 0, 0, 0.05)",
 	width: "100%",
 	margin: "0 auto",
 }));
 
-// Стилизованная кнопка
 const StyledButton = styled(Button)(({ theme }) => ({
-	borderRadius: 8,
+	borderRadius: 12,
 	padding: theme.spacing(1.5, 2),
-	fontWeight: 600,
 	textTransform: "none",
-	fontSize: "1rem",
-	height: 48,
+	fontSize: "18px",
+	fontWeight: 'semibold',
+	height: 54,
 	"&:hover": {
 		boxShadow: "0 4px 12px rgba(33, 15, 243, 0.3)",
 	},
@@ -41,9 +39,8 @@ const Login: React.FC = () => {
 	const [rememberMe, setRememberMe] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
 
-	// Валидация по-прежнему для поля username, но логика — email
 	const loginSchema = yup.object({
-		username: yup.string().required("Почта обязательна"),
+		username: yup.string().required("Поле обязательно для заполнения"),
 		password: yup.string().required("Пароль обязателен").min(6, "Пароль должен содержать не менее 6 символов"),
 	});
 
@@ -81,13 +78,13 @@ const Login: React.FC = () => {
 		<Box
 			component="main"
 			sx={{
-				maxWidth: "100vw",
-				width: "100%",
+				width: "100vw",
 				height: "100vh",
 				display: "flex",
 				alignItems: "center",
 				justifyContent: "center",
 				backgroundColor: "#F9F9F9",
+				fontFamily: "Inter, sans-serif",
 			}}>
 			<Box
 				sx={{
@@ -190,6 +187,9 @@ const Login: React.FC = () => {
 									sx={{
 										margin: 0,
 										borderRadius: "12px",
+										'& .MuiInputBase-input': {
+											color: '#232323',
+										},
 										"& .MuiOutlinedInput-root": {
 											borderRadius: "12px",
 										},
@@ -278,50 +278,74 @@ const Login: React.FC = () => {
 								},
 							}}
 						/>
-
-						<StyledButton
-							type="submit"
-							fullWidth
-							variant="contained"
-							sx={{
-								backgroundColor: "#242EDB",
-								"&:hover": {
-									backgroundColor: "#242EDB",
-								},
-							}}
-							disabled={loading}>
-							{loading ? "Выполняется вход..." : "Войти"}
-						</StyledButton>
+						<Tooltip
+							title={
+								<React.Fragment>
+									<Typography
+										color="inherit"
+										variant="body2">
+										Демо учетные данные:
+									</Typography>
+									<Typography
+										variant="body2"
+										sx={{ mt: 0.5 }}>
+										email: emilys
+										<br />
+										пароль: emilyspass
+									</Typography>
+								</React.Fragment>
+							}
+							placement="top"
+							arrow>
+							<span>
+								<StyledButton
+									type="submit"
+									fullWidth
+									variant="contained"
+									sx={{
+										backgroundColor: "#242EDB",
+										"&:hover": {
+											backgroundColor: "#242EDB",
+										},
+									}}
+									disabled={loading}>
+									{loading ? "Выполняется вход..." : "Войти"}
+								</StyledButton>
+							</span>
+						</Tooltip>
 
 						<Box
 							sx={{
 								display: "flex",
 								alignItems: "center",
 								justifyContent: "center",
-								mb: 2,
-								color: "#9E9E9E",
-								fontSize: "0.875rem",
+								mt: 2,
+								fontSize: "16px",
+								lineHeight: "150%",
+								color: "#9C9C9C",
 							}}>
-							<Box sx={{ height: 1, width: "40%", bgcolor: "#E0E0E0" }} />
-							<Box sx={{ px: 2 }}>или</Box>
-							<Box sx={{ height: 1, width: "40%", bgcolor: "#E0E0E0" }} />
+							<Box sx={{ height: 2, bgcolor: "#EDEDED", flexGrow: 1 }} />
+							<Box sx={{ px: 2, textShadow: 'inset 0 4px 4px 0 rgba(0, 0, 0, 0.25)' }}>или</Box>
+							<Box sx={{ height: 2, bgcolor: "#EDEDED", flexGrow: 1 }} />
 						</Box>
 
+					</Box>
 						<Typography
 							variant="body2"
 							align="center"
 							sx={{
-								color: "#616161",
-								fontSize: "0.9rem",
+								color: "#6C6C6C",
+								lineHeight: "150%",
+								fontWeight: 'regular',
+								fontSize: "18px",
 							}}>
 							Нет аккаунта?{" "}
 							<Link
 								href="/register"
 								variant="body2"
 								sx={{
-									fontWeight: 600,
-									color: "#2196F3",
-									textDecoration: "none",
+									fontWeight: 'semibold',
+									color: "#242EDB",
 									"&:hover": {
 										textDecoration: "underline",
 									},
@@ -329,18 +353,6 @@ const Login: React.FC = () => {
 								Создать
 							</Link>
 						</Typography>
-
-						<Box sx={{ mt: 3, textAlign: "center" }}>
-							<Typography
-								variant="body2"
-								color="text.secondary"
-								sx={{ fontSize: "0.85rem" }}>
-								Демо учетные данные:
-								<br />
-								email: emilys, пароль: emilyspass
-							</Typography>
-						</Box>
-					</Box>
 				</FormContainer>
 			</Box>
 		</Box>
