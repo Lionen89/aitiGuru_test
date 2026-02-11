@@ -12,8 +12,8 @@ import { Visibility, VisibilityOff, Email, Lock, Close } from "@mui/icons-materi
 import { styled } from "@mui/material/styles";
 import logo from "../assets/logo.svg";
 
-const FormContainer = styled(Box)(({ theme }) => ({
-	padding: '48px 58px',
+const FormContainer = styled(Box)(() => ({
+	padding: "48px",
 	borderRadius: 16,
 	boxShadow: "0 4px 20px rgba(0, 0, 0, 0.05)",
 	width: "100%",
@@ -25,7 +25,7 @@ const StyledButton = styled(Button)(({ theme }) => ({
 	padding: theme.spacing(1.5, 2),
 	textTransform: "none",
 	fontSize: "18px",
-	fontWeight: 'semibold',
+	fontWeight: "semibold",
 	height: 54,
 	"&:hover": {
 		boxShadow: "0 4px 12px rgba(33, 15, 243, 0.3)",
@@ -143,6 +143,7 @@ const Login: React.FC = () => {
 							sx={{
 								color: "#E0E0E0",
 								fontSize: "18px",
+								fontWeight: 500,
 								lineHeight: "150%",
 							}}>
 							Пожалуйста, авторизуйтесь
@@ -153,7 +154,7 @@ const Login: React.FC = () => {
 						component="form"
 						onSubmit={handleSubmit(onSubmit)}
 						noValidate
-						sx={{ width: "100%" }}>
+						sx={{ width: "100%", padding: "0 10px" }}>
 						<Box sx={{ display: "flex", flexDirection: "column", gap: "16px", alignItems: "center", justifyContent: "center", width: "100%" }}>
 							<Box sx={{ display: "flex", flexDirection: "column", gap: "6px", alignItems: "flex-start", justifyContent: "flex-start", width: "100%" }}>
 								<Typography sx={{ fontSize: "18px", lineHeight: "150%" }}>Почта</Typography>
@@ -178,7 +179,7 @@ const Login: React.FC = () => {
 												<IconButton
 													onClick={() => handleClearField("username")}
 													edge="end"
-													sx={{ color: "#C9C9C9" }}>
+													sx={{ color: "#C9C9C9", "&:focus": { outline: "none" } }}>
 													<Close />
 												</IconButton>
 											</InputAdornment>
@@ -187,8 +188,8 @@ const Login: React.FC = () => {
 									sx={{
 										margin: 0,
 										borderRadius: "12px",
-										'& .MuiInputBase-input': {
-											color: '#232323',
+										"& .MuiInputBase-input": {
+											color: "#232323",
 										},
 										"& .MuiOutlinedInput-root": {
 											borderRadius: "12px",
@@ -240,10 +241,21 @@ const Login: React.FC = () => {
 							<Alert
 								severity="error"
 								sx={{
-									mb: 2,
-									borderRadius: 8,
+									margin: '16px 0',
+									borderRadius: 4,
 									backgroundColor: "#FFEBEE",
 									color: "#B71C1C",
+									"& .MuiAlert-icon": {
+										marginRight: '4px',
+							
+									},
+									"& .MuiAlert-root": {
+										padding: '5px 10px',
+									},
+									"& .MuiAlert-message": {
+										fontSize: "13px",
+										lineHeight: "150%",
+									}
 								}}>
 								{error}
 							</Alert>
@@ -303,10 +315,8 @@ const Login: React.FC = () => {
 									fullWidth
 									variant="contained"
 									sx={{
-										backgroundColor: "#242EDB",
-										"&:hover": {
-											backgroundColor: "#242EDB",
-										},
+										bgcolor: "#242EDB",
+										boxShadow: "inset 0 0 0 1px #367AFF",
 									}}
 									disabled={loading}>
 									{loading ? "Выполняется вход..." : "Войти"}
@@ -325,34 +335,34 @@ const Login: React.FC = () => {
 								color: "#9C9C9C",
 							}}>
 							<Box sx={{ height: 2, bgcolor: "#EDEDED", flexGrow: 1 }} />
-							<Box sx={{ px: 2, textShadow: 'inset 0 4px 4px 0 rgba(0, 0, 0, 0.25)' }}>или</Box>
+							<Box sx={{ px: 2, textShadow: "inset 0 4px 4px 0 rgba(0, 0, 0, 0.25)" }}>или</Box>
 							<Box sx={{ height: 2, bgcolor: "#EDEDED", flexGrow: 1 }} />
 						</Box>
-
 					</Box>
-						<Typography
+					<Typography
+						variant="body2"
+						align="center"
+						sx={{
+							color: "#6C6C6C",
+							lineHeight: "150%",
+							fontWeight: "regular",
+							fontSize: "18px",
+						}}>
+						Нет аккаунта?{" "}
+						<Link
+							href="/register"
 							variant="body2"
-							align="center"
 							sx={{
-								color: "#6C6C6C",
-								lineHeight: "150%",
-								fontWeight: 'regular',
+								fontWeight: 600,
+								color: "#242EDB",
 								fontSize: "18px",
+								"&:hover": {
+									textDecoration: "underline",
+								},
 							}}>
-							Нет аккаунта?{" "}
-							<Link
-								href="/register"
-								variant="body2"
-								sx={{
-									fontWeight: 'semibold',
-									color: "#242EDB",
-									"&:hover": {
-										textDecoration: "underline",
-									},
-								}}>
-								Создать
-							</Link>
-						</Typography>
+							Создать
+						</Link>
+					</Typography>
 				</FormContainer>
 			</Box>
 		</Box>

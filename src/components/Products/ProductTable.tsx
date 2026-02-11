@@ -1,7 +1,8 @@
 import React from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Checkbox, IconButton, Box, MenuItem, Menu, TableFooter, Pagination, Typography } from "@mui/material";
 import { Add, MoreVert } from "@mui/icons-material";
-import type { Product } from "../../types";
+import type { Product, SortConfig } from "../../types";
+import { ProductThumbnail } from "./ProductThumbnail";
 
 interface ProductTableProps {
 	sortedData: Product[];
@@ -17,6 +18,7 @@ interface ProductTableProps {
 	totalCount: number;
 	onPageChange: (newPage: number) => void;
 }
+const MAX_RAITING = 5;
 
 const ProductTable: React.FC<ProductTableProps> = ({ sortedData, selected, selectAllChecked, handleSelect, handleSelectAll, handleSort, getSortIndicator, handleContextMenu, handleDoubleClick, page, totalCount, onPageChange }) => {
 	const [contextMenu, setContextMenu] = React.useState<{
@@ -38,7 +40,9 @@ const ProductTable: React.FC<ProductTableProps> = ({ sortedData, selected, selec
 	};
 
 	return (
-		<TableContainer component={Paper}>
+		<TableContainer
+			component={Paper}
+			sx={{ border: "none", boxShadow: "none" }}>
 			<Table
 				sx={{ minWidth: 650 }}
 				aria-label="products table">
@@ -46,42 +50,44 @@ const ProductTable: React.FC<ProductTableProps> = ({ sortedData, selected, selec
 					<TableRow>
 						<TableCell padding="checkbox">
 							<Checkbox
+								icon={<Box sx={{ backgroundColor: "#fff", width: "22px", height: "22px", borderRadius: "4px", border: "1px solid #CCCCCC" }}></Box>}
 								checked={selectAllChecked}
 								onChange={handleSelectAll}
 								inputProps={{ "aria-label": "выбрать все продукты" }}
+								checkedIcon={<Box sx={{ backgroundColor: "#3C538E", width: "22px", height: "22px", borderRadius: "4px", border: "1px solid #CCCCCC" }}></Box>}
 							/>
 						</TableCell>
 						<TableCell
 							onClick={() => handleSort("title")}
 							sx={{ cursor: "pointer", fontWeight: "bold" }}>
-							<Box sx={{ display: "flex", alignItems: "center" }}>Наименование {getSortIndicator("title")}</Box>
+							<Box sx={{ display: "flex", alignItems: "center", gap: 1, color: "#E0E0E0" }}>Наименование {getSortIndicator("title")}</Box>
 						</TableCell>
 						<TableCell
 							onClick={() => handleSort("brand")}
 							sx={{ cursor: "pointer", fontWeight: "bold" }}>
-							<Box sx={{ display: "flex", alignItems: "center" }}>Вендор {getSortIndicator("brand")}</Box>
+							<Box sx={{ display: "flex", alignItems: "center", gap: 1, color: "#E0E0E0" }}>Вендор {getSortIndicator("brand")}</Box>
 						</TableCell>
 						<TableCell
 							onClick={() => handleSort("sku")}
 							sx={{ cursor: "pointer", fontWeight: "bold" }}>
-							<Box sx={{ display: "flex", alignItems: "center" }}>Артикул {getSortIndicator("sku")}</Box>
+							<Box sx={{ display: "flex", alignItems: "center", gap: 1, color: "#E0E0E0" }}>Артикул {getSortIndicator("sku")}</Box>
 						</TableCell>
 						<TableCell
 							onClick={() => handleSort("rating")}
 							sx={{ cursor: "pointer", fontWeight: "bold" }}>
-							<Box sx={{ display: "flex", alignItems: "center" }}>Оценка {getSortIndicator("rating")}</Box>
+							<Box sx={{ display: "flex", alignItems: "center", gap: 1, color: "#E0E0E0" }}>Оценка {getSortIndicator("rating")}</Box>
 						</TableCell>
 						<TableCell
 							onClick={() => handleSort("price")}
 							sx={{ cursor: "pointer", fontWeight: "bold" }}>
-							<Box sx={{ display: "flex", alignItems: "center" }}>Цена {getSortIndicator("price")}</Box>
+							<Box sx={{ display: "flex", alignItems: "center", gap: 1, color: "#E0E0E0" }}>Цена {getSortIndicator("price")}</Box>
 						</TableCell>
 						<TableCell
 							onClick={() => handleSort("stock")}
 							sx={{ cursor: "pointer", fontWeight: "bold" }}>
-							<Box sx={{ display: "flex", alignItems: "center" }}>Количество {getSortIndicator("stock")}</Box>
+							<Box sx={{ display: "flex", alignItems: "center", gap: 1, color: "#E0E0E0" }}>Количество {getSortIndicator("stock")}</Box>
 						</TableCell>
-						<TableCell align="right">Действия</TableCell>
+						<TableCell align="right"></TableCell>
 					</TableRow>
 				</TableHead>
 				<TableBody>
@@ -90,28 +96,65 @@ const ProductTable: React.FC<ProductTableProps> = ({ sortedData, selected, selec
 							key={product.id}
 							sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
 							onDoubleClick={() => handleDoubleClick(product)}>
-							<TableCell padding="checkbox">
+							<TableCell
+								padding="checkbox"
+								sx={{ borderLeft: selected.includes(product.id) ? "5px solid #3C538E" : "5px solid #fff " }}>
 								<Checkbox
+									icon={<Box sx={{ backgroundColor: "#fff", width: "22px", height: "22px", borderRadius: "4px", border: "1px solid #CCCCCC" }}></Box>}
 									checked={selected.includes(product.id)}
 									onChange={() => handleSelect(product.id)}
 									inputProps={{ "aria-label": "выбрать продукт" }}
+									checkedIcon={<Box sx={{ backgroundColor: "#3C538E", width: "22px", height: "22px", borderRadius: "4px", border: "1px solid #CCCCCC" }}></Box>}
+									sx={{
+										color: "#F5F5F5",
+										"& input": {
+											borderRadius: "4px",
+										},
+									}}
 								/>
 							</TableCell>
 							<TableCell
 								component="th"
-								scope="row">
-								{product.title}
+								scope="row"
+								sx={{ display: "flex", alignItems: "center", height: "auto", gap: "8px" }}>
+								<ProductThumbnail
+									src={product.thumbnail}
+									alt={product.title}
+								/>
+								<Box>
+									<Typography
+										variant="h6"
+										color="black"
+										fontSize={16}>
+										{product?.title}
+									</Typography>
+									<Typography
+										variant="body2"
+										color="#E0E0E0"
+										fontSize={14}
+										sx={{
+											display: "inline-block",
+											"&::first-letter": {
+												textTransform: "uppercase",
+											},
+										}}>
+										{product?.category}
+									</Typography>
+								</Box>
 							</TableCell>
 							<TableCell>{product.brand}</TableCell>
 							<TableCell>{product.sku}</TableCell>
 							<TableCell>
-								<Box
-									component="span"
-									sx={{
-										color: product.rating < 3 ? "error.main" : "inherit",
-										fontWeight: product.rating < 3 ? "bold" : "normal",
-									}}>
-									{product.rating}
+								<Box sx={{ display: "flex", alignItems: "center" }}>
+									<Typography
+										variant="body2"
+										sx={{
+											color: product.rating < 3 ? "#F11010" : "inherit",
+											fontWeight: "normal",
+										}}>
+										{product.rating}
+									</Typography>
+									/ {MAX_RAITING}
 								</Box>
 							</TableCell>
 							<TableCell>${product.price.toFixed(2)}</TableCell>
@@ -130,24 +173,30 @@ const ProductTable: React.FC<ProductTableProps> = ({ sortedData, selected, selec
 					))}
 				</TableBody>
 				<TableFooter>
-					<Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 2, px: 2 }}>
-						<Typography
-							variant="body2"
-							color="text.secondary">
-							{page * 20 + 1}–{Math.min((page + 1) * 20, totalCount)} из {totalCount}
-						</Typography>
-						<Pagination
-							count={Math.ceil(totalCount / 20)}
-							page={page + 1}
-							onChange={(_, newPage) => onPageChange(newPage - 1)}
-							color="primary"
-							sx={{
-								"& .MuiPaginationItem-root": {
-									display: "inline-flex", // ← принудительно
-								},
-							}}
-						/>
-					</Box>
+					<TableRow>
+						<TableCell
+							colSpan={100}
+							sx={{ borderBottom: "none" }}>
+							<Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 2, px: 2 }}>
+								<Typography
+									variant="body2"
+									color="text.secondary">
+									{page * 20 + 1}–{Math.min((page + 1) * 20, totalCount)} из {totalCount}
+								</Typography>
+								<Pagination
+									count={Math.ceil(totalCount / 20)}
+									page={page + 1}
+									onChange={(_, newPage) => onPageChange(newPage - 1)}
+									color="primary"
+									sx={{
+										"& .MuiPaginationItem-root": {
+											display: "inline-flex",
+										},
+									}}
+								/>
+							</Box>
+						</TableCell>
+					</TableRow>
 				</TableFooter>
 			</Table>
 
