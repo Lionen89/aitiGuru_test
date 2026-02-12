@@ -5,17 +5,12 @@ export const ProductThumbnail: React.FC<{ src?: string; alt: string }> = ({ src,
 	const [loaded, setLoaded] = React.useState(false);
 	const [error, setError] = React.useState(false);
 
-	React.useEffect(() => {
-		setLoaded(false);
-		setError(false);
-	}, [src]);
-
 	if (!src || error || !loaded) {
 		return (
 			<Box
 				sx={{
-					width: 48,
-					height: 48,
+					minWidth: 48,
+					minHeight: 48,
 					bgcolor: "#C4C4C4",
 					borderRadius: "4px",
 				}}

@@ -1,8 +1,9 @@
 import React from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Checkbox, IconButton, Box, MenuItem, Menu, TableFooter, Pagination, Typography } from "@mui/material";
 import { Add, MoreVert } from "@mui/icons-material";
-import type { Product, SortConfig } from "../../types";
+import type { Product } from "../../types";
 import { ProductThumbnail } from "./ProductThumbnail";
+import { StockIndicator } from "./StockIndicator";
 
 interface ProductTableProps {
 	sortedData: Product[];
@@ -60,32 +61,32 @@ const ProductTable: React.FC<ProductTableProps> = ({ sortedData, selected, selec
 						<TableCell
 							onClick={() => handleSort("title")}
 							sx={{ cursor: "pointer", fontWeight: "bold" }}>
-							<Box sx={{ display: "flex", alignItems: "center", gap: 1, color: "#E0E0E0" }}>Наименование {getSortIndicator("title")}</Box>
+							<Box sx={{ display: "flex", alignItems: "center", gap: 1, color: "#B2B3B9", fontSize: "16px" }}>Наименование {getSortIndicator("title")}</Box>
 						</TableCell>
 						<TableCell
 							onClick={() => handleSort("brand")}
 							sx={{ cursor: "pointer", fontWeight: "bold" }}>
-							<Box sx={{ display: "flex", alignItems: "center", gap: 1, color: "#E0E0E0" }}>Вендор {getSortIndicator("brand")}</Box>
+							<Box sx={{ display: "flex", alignItems: "center", gap: 1, color: "#B2B3B9", fontSize: "16px", justifyContent: "center" }}>Вендор {getSortIndicator("brand")}</Box>
 						</TableCell>
 						<TableCell
 							onClick={() => handleSort("sku")}
 							sx={{ cursor: "pointer", fontWeight: "bold" }}>
-							<Box sx={{ display: "flex", alignItems: "center", gap: 1, color: "#E0E0E0" }}>Артикул {getSortIndicator("sku")}</Box>
+							<Box sx={{ display: "flex", alignItems: "center", gap: 1, color: "#B2B3B9", fontSize: "16px", justifyContent: "center" }}>Артикул {getSortIndicator("sku")}</Box>
 						</TableCell>
 						<TableCell
 							onClick={() => handleSort("rating")}
 							sx={{ cursor: "pointer", fontWeight: "bold" }}>
-							<Box sx={{ display: "flex", alignItems: "center", gap: 1, color: "#E0E0E0" }}>Оценка {getSortIndicator("rating")}</Box>
+							<Box sx={{ display: "flex", alignItems: "center", gap: 1, color: "#B2B3B9", fontSize: "16px", justifyContent: "center" }}>Оценка {getSortIndicator("rating")}</Box>
 						</TableCell>
 						<TableCell
 							onClick={() => handleSort("price")}
 							sx={{ cursor: "pointer", fontWeight: "bold" }}>
-							<Box sx={{ display: "flex", alignItems: "center", gap: 1, color: "#E0E0E0" }}>Цена {getSortIndicator("price")}</Box>
+							<Box sx={{ display: "flex", alignItems: "center", gap: 1, color: "#B2B3B9", fontSize: "16px", justifyContent: "center" }}>Цена, ₽ {getSortIndicator("price")}</Box>
 						</TableCell>
 						<TableCell
 							onClick={() => handleSort("stock")}
 							sx={{ cursor: "pointer", fontWeight: "bold" }}>
-							<Box sx={{ display: "flex", alignItems: "center", gap: 1, color: "#E0E0E0" }}>Количество {getSortIndicator("stock")}</Box>
+							<Box sx={{ display: "flex", alignItems: "center", gap: 1, color: "#B2B3B9", fontSize: "16px", justifyContent: "center" }}>Количество {getSortIndicator("stock")}</Box>
 						</TableCell>
 						<TableCell align="right"></TableCell>
 					</TableRow>
@@ -124,13 +125,14 @@ const ProductTable: React.FC<ProductTableProps> = ({ sortedData, selected, selec
 								<Box>
 									<Typography
 										variant="h6"
-										color="black"
+										color="#161919"
+										fontWeight={"bold"}
 										fontSize={16}>
 										{product?.title}
 									</Typography>
 									<Typography
 										variant="body2"
-										color="#E0E0E0"
+										color="#B2B3B9"
 										fontSize={14}
 										sx={{
 											display: "inline-block",
@@ -142,32 +144,60 @@ const ProductTable: React.FC<ProductTableProps> = ({ sortedData, selected, selec
 									</Typography>
 								</Box>
 							</TableCell>
-							<TableCell>{product.brand}</TableCell>
-							<TableCell>{product.sku}</TableCell>
+							<TableCell sx={{ fontWeight: "bold", color: "#000000", fontSize: "16px", fontFamily: "Open Sans" }}>
+								<Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center" }}>{product.brand}</Box>
+							</TableCell>
+							<TableCell sx={{ fcolor: "#000000", fontSize: "16px", fontFamily: "Open Sans" }}>
+								<Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center" }}>{product.sku}</Box>
+							</TableCell>
 							<TableCell>
-								<Box sx={{ display: "flex", alignItems: "center" }}>
+								<Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
 									<Typography
 										variant="body2"
 										sx={{
 											color: product.rating < 3 ? "#F11010" : "inherit",
 											fontWeight: "normal",
+											fontFamily: "Open Sans",
 										}}>
 										{product.rating}
 									</Typography>
 									/ {MAX_RAITING}
 								</Box>
 							</TableCell>
-							<TableCell>${product.price.toFixed(2)}</TableCell>
-							<TableCell>{product.stock}</TableCell>
+							<TableCell>
+								<Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Roboto Mono", fontSize: "16px", whiteSpace: "nowrap" }}>
+									{(() => {
+										const fixed = product.price.toFixed(2);
+										const [rublesStr, kopecks] = fixed.split(".");
+										const rubles = rublesStr.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+										return (
+											<>
+												{rubles}
+												<Typography sx={{ color: "#B2B3B9", fontFamily: "Roboto Mono", fontSize: "16px" }}>,{kopecks}</Typography>
+											</>
+										);
+									})()}
+								</Box>
+							</TableCell>
+							<TableCell>
+								<Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+									<StockIndicator value={product.stock} />
+								</Box>
+							</TableCell>
 							<TableCell align="right">
-								<IconButton aria-label="add">
-									<Add />
-								</IconButton>
-								<IconButton
-									aria-label="more options"
-									onClick={(e) => handleContextMenu(e, product)}>
-									<MoreVert />
-								</IconButton>
+								<Box sx={{ display: "flex", alignItems: "center", justifyContent: "flex-end", flexWrap: "nowrap", gap: "32px" }}>
+									<IconButton
+										aria-label="add"
+										sx={{ width: "57px", height: "27px", bgcolor: "#242EDB", borderRadius: "23px", "&:focus": { outline: "none" }, "&:hover": { bgcolor: "#242EDB", opacity: 0.8 } }}>
+										<Add sx={{ color: "#fff" }} />
+									</IconButton>
+									<IconButton
+										aria-label="more options"
+										onClick={(e) => handleContextMenu(e, product)}
+										sx={{ transform: "rotate(90deg)", color: "#B2B3B9", width: "32px", height: "32px", "&:focus": { outline: "none" } }}>
+										<MoreVert sx={{ border: "1px solid #B2B3B9", borderRadius: "50%" }} />
+									</IconButton>
+								</Box>
 							</TableCell>
 						</TableRow>
 					))}
@@ -177,20 +207,49 @@ const ProductTable: React.FC<ProductTableProps> = ({ sortedData, selected, selec
 						<TableCell
 							colSpan={100}
 							sx={{ borderBottom: "none" }}>
-							<Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 2, px: 2 }}>
+							<Box
+								sx={{
+									display: "flex",
+									justifyContent: "space-between",
+									alignItems: "center",
+									mt: 2,
+									flexWrap: "nowrap",
+									whiteSpace: "nowrap",
+									minWidth: 0,
+								}}>
 								<Typography
 									variant="body2"
-									color="text.secondary">
-									{page * 20 + 1}–{Math.min((page + 1) * 20, totalCount)} из {totalCount}
+									sx={{ fontSize: "18px", flexShrink: 1, color: "#969B9F" }}>
+									Показано{" "}
+									<Typography
+										component="span"
+										color="#333333">
+										{page * 20 + 1}-{Math.min((page + 1) * 20, totalCount)}
+									</Typography>{" "}
+									из{" "}
+									<Typography
+										component="span"
+										color="#333333">
+										{totalCount}
+									</Typography>
 								</Typography>
+
 								<Pagination
 									count={Math.ceil(totalCount / 20)}
 									page={page + 1}
 									onChange={(_, newPage) => onPageChange(newPage - 1)}
 									color="primary"
 									sx={{
+										flexShrink: 0,
 										"& .MuiPaginationItem-root": {
 											display: "inline-flex",
+											minWidth: "32px",
+											height: "32px",
+											fontSize: "14px",
+										},
+										"& .MuiPaginationItem-page.Mui-selected": {
+											backgroundColor: "primary.main",
+											color: "white",
 										},
 									}}
 								/>

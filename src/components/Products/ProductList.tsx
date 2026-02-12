@@ -6,6 +6,8 @@ import type { Product, SortConfig } from "../../types";
 import { Add, ArrowDownward, ArrowUpward } from "@mui/icons-material";
 import ProductTable from "./ProductTable";
 import { productsApi } from "../../services/api";
+import { FilterIcon } from "../../assets/FilterIcon.tsx";
+import { RefreshtIcon } from "../../assets/RefreshtIcon.tsx";
 
 interface ProductListProps {
 	searchTerm: string;
@@ -120,16 +122,50 @@ const ProductList: React.FC<ProductListProps> = ({ searchTerm, sortConfig, page,
 	}
 
 	return (
-		<Box sx={{ mt: 3, p: 3, borderRadius: '12px', background: "white" }}>
+		<Box sx={{ mt: 3, p: 3, borderRadius: "12px", background: "white" }}>
 			<Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
-				<Typography variant="h4" sx={{ fontSize: 14, fontWeight: 600 }}>Все позиции</Typography>
-				<Button
-					variant="contained"
-					startIcon={<Add />}
-					onClick={onAddProductClick}
-					sx={{ ml: 2 }}>
-					Добавить продукт
-				</Button>
+				<Typography
+					variant="h4"
+					sx={{ fontSize: 20, fontWeight: 700, color: "#333333" }}>
+					Все позиции
+				</Typography>
+				<Box sx={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "8px" }}>
+					<Button sx={{ width: "42px", minWidth: "unset", height: "42px", border: "1px solid #ECECEB", padding: 0, borderRadius: "8px", "&:focus": { outline: "none" } }}>
+						<RefreshtIcon />
+					</Button>
+					<Button sx={{ width: "42px", minWidth: "unset", height: "42px", border: "1px solid #ECECEB", padding: 0, borderRadius: "8px", "&:focus": { outline: "none" } }}>
+						<FilterIcon />
+					</Button>
+					<Button
+						variant="contained"
+						startIcon={
+							<Box
+								sx={{
+									borderRadius: "50%",
+									color: "#FFFFFF",
+									border: "1px solid #FFFFFF",
+									height: "22px",
+									width: "22px",
+									display: "flex",
+									alignItems: "center",
+									justifyContent: "center",
+								}}>
+								<Add fontSize="small" />
+							</Box>
+						}
+						onClick={onAddProductClick}
+						sx={{
+							fontSize: 14,
+							fontWeight: 600,
+							textTransform: "none",
+							"&:focus": { outline: "none" },
+							"& .MuiButton-startIcon": { mr: "15px" },
+							padding: "10px 20px",
+							borderRadius: "6px",
+						}}>
+						Добавить
+					</Button>
+				</Box>
 			</Box>
 
 			{isLoading && (

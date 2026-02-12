@@ -54,7 +54,7 @@ const ProductsPage: React.FC = () => {
 			sx={{
 				background: "#F6F6F6",
 				minHeight: "100vh",
-        minWidth: '100vw',
+				minWidth: "100vw",
 				padding: { xs: "16px", sm: "20px 30px 20px 0" },
 			}}>
 			<ProductBar

@@ -1,6 +1,9 @@
-import { Language, Mail, Notifications, Search, Tune } from "@mui/icons-material";
+import { Search } from "@mui/icons-material";
 import { AppBar, Box, IconButton, Toolbar, Typography, TextField, useMediaQuery, useTheme, InputAdornment, Divider } from "@mui/material";
 import NotificationIcon from "../NotificationIcon";
+import { GlobeIcon } from "../../assets/GlobeIcon.tsx";
+import { Settings } from "../../assets/Settings.tsx";
+import { MailIcon } from "../../assets/MailIcon.tsx";
 
 interface ProductBarProps {
 	searchTerm: string;
@@ -35,7 +38,7 @@ function ProductBar({ searchTerm, onSearchChange, onLogout }: ProductBarProps) {
 					<Typography
 						variant="h6"
 						component="div"
-						sx={{ fontWeight: 600, color: "black", fontSize: 24 }}>
+						sx={{ fontWeight: 900, color: "#202020", fontSize: 24 }}>
 						Товары
 					</Typography>
 
@@ -49,7 +52,7 @@ function ProductBar({ searchTerm, onSearchChange, onLogout }: ProductBarProps) {
 						InputProps={{
 							startAdornment: (
 								<InputAdornment position="start">
-									<Search sx={{ color: "text.secondary" }} />
+									<Search sx={{ color: "#999999" }} />
 								</InputAdornment>
 							),
 							sx: {
@@ -74,27 +77,31 @@ function ProductBar({ searchTerm, onSearchChange, onLogout }: ProductBarProps) {
 							},
 						}}
 					/>
-                    <Divider orientation="vertical" flexItem sx={{width: '1px', backgroundColor: '#E6E6E6'}}/>
-					<Box sx={{ display: "flex", gap: '10px' }}>
+					<Divider
+						orientation="vertical"
+						flexItem
+						sx={{ width: "1px", backgroundColor: "#E6E6E6" }}
+					/>
+					<Box sx={{ display: "flex", gap: "10px" }}>
 						<IconButton
-							sx={{ color: "#CCCCCC", padding: '10px', "&:focus": { outline: "none"}  }}
+							sx={{ color: "#CCCCCC", padding: "10px", "&:focus": { outline: "none" } }}
 							aria-label="язык">
-							<Language />
+							<GlobeIcon />
 						</IconButton>
 						<IconButton
-							sx={{ color: "#CCCCCC",  padding: '10px', "&:focus": { outline: "none"} }}
+							sx={{ color: "#CCCCCC", padding: "10px", "&:focus": { outline: "none" } }}
 							aria-label="уведомления">
-							<NotificationIcon data={false} />
+							<NotificationIcon data={true} />
 						</IconButton>
 						<IconButton
-							sx={{ color: "#CCCCCC",  padding: '10px', "&:focus": { outline: "none"} }}
+							sx={{ color: "#CCCCCC", padding: "10px", "&:focus": { outline: "none" } }}
 							aria-label="сообщения">
-							<Mail />
+							<MailIcon />
 						</IconButton>
 						<IconButton
-							sx={{ color: "#CCCCCC",  padding: '10px', "&:focus": { outline: "none"}, transform: "rotate(90deg)" }}
+							sx={{ color: "#CCCCCC", padding: "10px", "&:focus": { outline: "none" } }}
 							aria-label="фильтры">
-							<Tune />
+							<Settings />
 						</IconButton>
 					</Box>
 				</Box>
