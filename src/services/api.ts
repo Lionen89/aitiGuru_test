@@ -82,6 +82,11 @@ export const productsApi = {
     images: string[];
     sku: string;
     weight: number;
+    dimensions: {
+    width: number;
+    height: number;
+    depth: number;
+  };
   }): Promise<Product> => {
 
     await new Promise(resolve => setTimeout(resolve, 1000));

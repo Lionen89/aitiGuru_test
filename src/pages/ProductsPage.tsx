@@ -3,7 +3,7 @@ import { Box } from "@mui/material";
 import ProductList from "../components/Products/ProductList";
 import AddProductForm from "../components/Products/AddProductForm";
 import ProductBar from "../components/Products/ProductBar";
-import type { Product, SortConfig } from "../types";
+import type { SortConfig } from "../types";
 
 const ProductsPage: React.FC = () => {
 	const [searchTerm, setSearchTerm] = useState(() => localStorage.getItem("productSearchTerm") || "");
@@ -29,7 +29,7 @@ const ProductsPage: React.FC = () => {
 		localStorage.setItem("productPage", page.toString());
 	}, [page]);
 
-	const handleAddProductSuccess = (product: Product) => {
+	const handleAddProductSuccess = () => {
 		setShowAddProduct(false);
 	};
 
