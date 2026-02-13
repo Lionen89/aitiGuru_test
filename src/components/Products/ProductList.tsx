@@ -1,10 +1,10 @@
-// src/components/ProductList.tsx
-import React, { useState, useMemo, useEffect, useRef } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Box, Typography, Button, CircularProgress } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import type { Product, SortConfig } from "../../types";
 import { Add, ArrowDownward, ArrowUpward } from "@mui/icons-material";
 import ProductTable from "./ProductTable";
+import ProductInfoModal from "./ProductInfoModal";
+import type { Product, SortConfig } from "../../types";
 import { productsApi } from "../../services/api";
 import { FilterIcon } from "../../assets/FilterIcon.tsx";
 import { RefreshtIcon } from "../../assets/RefreshtIcon.tsx";
@@ -18,13 +18,18 @@ interface ProductListProps {
 	onAddProductClick: () => void;
 }
 
-const ProductList: React.FC<ProductListProps> = ({ searchTerm, sortConfig, page, onSort, onPageChange, onAddProductClick }) => {
+const ProductList: React.FC<ProductListProps> = ({ searchTerm, sortConfig: propSortConfig, page, onSort, onPageChange, onAddProductClick }) => {
+	const [localSortConfig, setLocalSortConfig] = useState<SortConfig | null>(propSortConfig);
 	const [selected, setSelected] = useState<number[]>([]);
 	const [selectAllChecked, setSelectAllChecked] = useState(false);
+	const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+	const [modalOpen, setModalOpen] = useState(false);
 
-	const doubleClickTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+	useEffect(() => {
+		setSelected([]);
+		setSelectAllChecked(false);
+	}, [searchTerm]);
 
-	// Fetch products
 	const { data, isLoading, isError, error } = useQuery({
 		queryKey: ["products", searchTerm, page],
 		queryFn: () => {
@@ -36,32 +41,36 @@ const ProductList: React.FC<ProductListProps> = ({ searchTerm, sortConfig, page,
 		staleTime: 5 * 60 * 1000,
 	});
 
+	const handleSort = (key: keyof Product) => {
+		let newConfig: SortConfig | null = null;
+
+		if (!localSortConfig || localSortConfig.key !== key) {
+			newConfig = { key, direction: "asc" };
+		} else if (localSortConfig.direction === "asc") {
+			newConfig = { key, direction: "desc" };
+		}
+
+		setLocalSortConfig(newConfig);
+		onSort(newConfig);
+	};
+
+	const activeSortConfig = localSortConfig || propSortConfig;
+
 	const sortedData = useMemo(() => {
 		if (!data?.products) return [];
 		let items = [...data.products];
-		if (sortConfig) {
+		if (activeSortConfig) {
 			items.sort((a, b) => {
-				if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === "asc" ? -1 : 1;
-				if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === "asc" ? 1 : -1;
+				if (a[activeSortConfig.key] < b[activeSortConfig.key]) return activeSortConfig.direction === "asc" ? -1 : 1;
+				if (a[activeSortConfig.key] > b[activeSortConfig.key]) return activeSortConfig.direction === "asc" ? 1 : -1;
 				return 0;
 			});
 		}
 		return items;
-	}, [data, sortConfig]);
+	}, [data, activeSortConfig]);
 
-	// Selection
 	const handleSelect = (id: number) => {
 		setSelected((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
-	};
-
-	const handleSort = (key: keyof Product) => {
-		if (!sortConfig || sortConfig.key !== key) {
-			onSort({ key, direction: "asc" });
-		} else if (sortConfig.direction === "asc") {
-			onSort({ key, direction: "desc" });
-		} else {
-			onSort(null);
-		}
 	};
 
 	const handleSelectAll = () => {
@@ -77,44 +86,24 @@ const ProductList: React.FC<ProductListProps> = ({ searchTerm, sortConfig, page,
 		setSelectAllChecked(sortedData.length > 0 && sortedData.length === selected.length);
 	}, [selected, sortedData]);
 
-	// Double click handler
 	const handleDoubleClick = (product: Product) => {
-		if (doubleClickTimeout.current) {
-			clearTimeout(doubleClickTimeout.current);
-			doubleClickTimeout.current = null;
-			console.log("Double-click edit:", product);
-			// Здесь можно открыть форму редактирования
-		} else {
-			doubleClickTimeout.current = setTimeout(() => {
-				doubleClickTimeout.current = null;
-			}, 300);
-		}
+		setSelectedProduct(product);
+		setModalOpen(true);
 	};
 
-	// Context menu
-	const handleContextMenu = (event: React.MouseEvent) => {
-		event.preventDefault();
-		// В ProductTable обрабатывается отдельно
-	};
-
-	// Get sort indicator
 	const getSortIndicator = (key: keyof Product) => {
-		if (!sortConfig || sortConfig.key !== key) return null;
-		return sortConfig.direction === "asc" ? <ArrowUpward fontSize="small" /> : <ArrowDownward fontSize="small" />;
+		if (!activeSortConfig || activeSortConfig.key !== key) return null;
+		return activeSortConfig.direction === "asc" ? <ArrowUpward fontSize="small" /> : <ArrowDownward fontSize="small" />;
 	};
 
-	// Save to localStorage
 	useEffect(() => localStorage.setItem("productSearchTerm", searchTerm), [searchTerm]);
-	useEffect(() => localStorage.setItem("productSortConfig", JSON.stringify(sortConfig)), [sortConfig]);
+	useEffect(() => localStorage.setItem("productSortConfig", JSON.stringify(activeSortConfig)), [activeSortConfig]);
 	useEffect(() => localStorage.setItem("productPage", page.toString()), [page]);
 
-	// Error handling
 	if (isError) {
 		return (
 			<Box sx={{ p: 3 }}>
-				<Typography
-					variant="h6"
-					color="error">
+				<Typography variant="h6" color="error">
 					Ошибка загрузки продуктов: {error instanceof Error ? error.message : "Неизвестная ошибка"}
 				</Typography>
 			</Box>
@@ -122,8 +111,8 @@ const ProductList: React.FC<ProductListProps> = ({ searchTerm, sortConfig, page,
 	}
 
 	return (
-		<Box sx={{ mt: 3, p: 3, borderRadius: "12px", background: "white" }}>
-			<Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+		<Box sx={{ pt: 3 }}>
+			<Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3, pl: '30px' }}>
 				<Typography
 					variant="h4"
 					sx={{ fontSize: 20, fontWeight: 700, color: "#333333" }}>
@@ -169,7 +158,7 @@ const ProductList: React.FC<ProductListProps> = ({ searchTerm, sortConfig, page,
 			</Box>
 
 			{isLoading && (
-				<Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "50vh" }}>
+				<Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "70vh" }}>
 					<CircularProgress />
 				</Box>
 			)}
@@ -183,13 +172,18 @@ const ProductList: React.FC<ProductListProps> = ({ searchTerm, sortConfig, page,
 					handleSelectAll={handleSelectAll}
 					handleSort={handleSort}
 					getSortIndicator={getSortIndicator}
-					handleContextMenu={handleContextMenu}
 					handleDoubleClick={handleDoubleClick}
 					page={page}
 					totalCount={data?.total || 0}
 					onPageChange={onPageChange}
 				/>
 			)}
+
+			<ProductInfoModal
+				open={modalOpen}
+				onClose={() => setModalOpen(false)}
+				product={selectedProduct}
+			/>
 		</Box>
 	);
 };

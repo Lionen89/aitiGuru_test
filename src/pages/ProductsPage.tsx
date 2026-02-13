@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useAppDispatch } from "../store";
 import { Box } from "@mui/material";
-import { logout } from "../store/authSlice";
 import ProductList from "../components/Products/ProductList";
 import AddProductForm from "../components/Products/AddProductForm";
 import ProductBar from "../components/Products/ProductBar";
@@ -19,9 +17,6 @@ const ProductsPage: React.FC = () => {
 	});
 	const [showAddProduct, setShowAddProduct] = useState(false);
 
-	const dispatch = useAppDispatch();
-
-	// Сохранение состояний в localStorage
 	useEffect(() => {
 		localStorage.setItem("productSearchTerm", searchTerm);
 	}, [searchTerm]);
@@ -35,18 +30,13 @@ const ProductsPage: React.FC = () => {
 	}, [page]);
 
 	const handleAddProductSuccess = (product: Product) => {
-		console.log("Продукт успешно добавлен:", product);
 		setShowAddProduct(false);
 	};
 
 	const handleSearchChange = (value: string) => {
 		setSearchTerm(value);
-		setPage(0); // Сброс пагинации при новом поиске
-	};
-
-	const handleLogout = () => {
-		dispatch(logout());
-	};
+		setPage(0);
+	}
 
 	return (
 		<Box
@@ -54,13 +44,12 @@ const ProductsPage: React.FC = () => {
 			sx={{
 				background: "#F6F6F6",
 				minHeight: "100vh",
-				minWidth: "100vw",
-				padding: { xs: "16px", sm: "20px 30px 20px 0" },
+				width: "calc(100vw - 15px)",
+				padding: "20px 30px 20px 0" ,
 			}}>
 			<ProductBar
 				searchTerm={searchTerm}
 				onSearchChange={handleSearchChange}
-				onLogout={handleLogout}
 			/>
 
 			<ProductList

@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Search } from "@mui/icons-material";
 import { AppBar, Box, IconButton, Toolbar, Typography, TextField, useMediaQuery, useTheme, InputAdornment, Divider } from "@mui/material";
 import NotificationIcon from "../NotificationIcon";
@@ -8,12 +9,51 @@ import { MailIcon } from "../../assets/MailIcon.tsx";
 interface ProductBarProps {
 	searchTerm: string;
 	onSearchChange: (value: string) => void;
-	onLogout: () => void;
 }
 
-function ProductBar({ searchTerm, onSearchChange, onLogout }: ProductBarProps) {
+const useDebounce = (value: string, delay: number): string => {
+	const [debouncedValue, setDebouncedValue] = useState(value);
+
+	useEffect(() => {
+		const handler = setTimeout(() => {
+			setDebouncedValue(value);
+		}, delay);
+
+		return () => {
+			clearTimeout(handler);
+		};
+	}, [value, delay]);
+
+	return debouncedValue;
+};
+
+function ProductBar({ searchTerm, onSearchChange }: ProductBarProps) {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+	const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
+	const debouncedSearchTerm = useDebounce(localSearchTerm, 500);
+
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+	if (e.key === 'Enter') {
+		const searchValue = localSearchTerm.trim();
+		onSearchChange(searchValue); 
+	}
+};
+
+	useEffect(() => {
+		const searchValue = debouncedSearchTerm.trim();
+		if (searchValue.length >= 2) {
+			onSearchChange(searchValue);
+		}
+	}, [debouncedSearchTerm, onSearchChange]);
+
+	useEffect(() => {
+		setLocalSearchTerm(searchTerm);
+	}, [searchTerm]);
+
+	const handleSearchChange = (value: string) => {
+		setLocalSearchTerm(value);
+	};
 
 	return (
 		<AppBar
@@ -46,8 +86,9 @@ function ProductBar({ searchTerm, onSearchChange, onLogout }: ProductBarProps) {
 						fullWidth
 						size={isMobile ? "small" : "medium"}
 						variant="outlined"
-						value={searchTerm}
-						onChange={(e) => onSearchChange(e.target.value)}
+						value={localSearchTerm}
+						onChange={(e) => handleSearchChange(e.target.value)}
+						onKeyDown={handleKeyDown} 
 						placeholder="Найти"
 						InputProps={{
 							startAdornment: (

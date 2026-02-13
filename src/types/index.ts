@@ -1,4 +1,3 @@
-// Product types
 export interface Product {
   id: number;
   title: string;
@@ -41,7 +40,6 @@ export interface Review {
   reviewerEmail: string;
 }
 
-// Authentication types
 export interface LoginRequest {
   username: string;
   password: string;
@@ -66,7 +64,6 @@ export interface AuthState {
   rememberMe: boolean;
 }
 
-// API Response types
 export interface ProductsResponse {
   products: Product[];
   total: number;

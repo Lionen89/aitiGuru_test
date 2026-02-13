@@ -20,6 +20,7 @@ export const ProductThumbnail: React.FC<{ src?: string; alt: string }> = ({ src,
 
 	return (
 		<>
+		
 			<img
 				src={src}
 				alt={alt}

@@ -1,9 +1,10 @@
-import React from "react";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Checkbox, IconButton, Box, MenuItem, Menu, TableFooter, Pagination, Typography } from "@mui/material";
+import React, { useEffect, useRef } from "react";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Checkbox, IconButton, Box, MenuItem, Menu, Typography, TableFooter } from "@mui/material";
 import { Add, MoreVert } from "@mui/icons-material";
 import type { Product } from "../../types";
 import { ProductThumbnail } from "./ProductThumbnail";
 import { StockIndicator } from "./StockIndicator";
+import SimplePagination from "./SimplePagination";
 
 interface ProductTableProps {
 	sortedData: Product[];
@@ -13,7 +14,6 @@ interface ProductTableProps {
 	handleSelectAll: () => void;
 	handleSort: (key: keyof Product) => void;
 	getSortIndicator: (key: keyof Product) => React.ReactNode | null;
-	handleContextMenu: (event: React.MouseEvent, product: Product) => void;
 	handleDoubleClick: (product: Product) => void;
 	page: number;
 	totalCount: number;
@@ -21,29 +21,44 @@ interface ProductTableProps {
 }
 const MAX_RAITING = 5;
 
-const ProductTable: React.FC<ProductTableProps> = ({ sortedData, selected, selectAllChecked, handleSelect, handleSelectAll, handleSort, getSortIndicator, handleContextMenu, handleDoubleClick, page, totalCount, onPageChange }) => {
+const ProductTable: React.FC<ProductTableProps> = ({ sortedData, selected, selectAllChecked, handleSelect, handleSelectAll, handleSort, getSortIndicator, handleDoubleClick, page, totalCount, onPageChange }) => {
+	const menuRef = useRef<HTMLDivElement>(null);
+
 	const [contextMenu, setContextMenu] = React.useState<{
 		mouseX: number;
 		mouseY: number;
 		product: Product | null;
 	}>({ mouseX: 0, mouseY: 0, product: null });
 
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+				handleCloseContextMenu();
+			}
+		};
+
+		document.addEventListener("click", handleClickOutside);
+		return () => {
+			document.removeEventListener("click", handleClickOutside);
+		};
+	}, []);
+
 	const handleCloseContextMenu = () => {
 		setContextMenu({ mouseX: 0, mouseY: 0, product: null });
 	};
 
 	const handleEditProduct = () => {
-		if (contextMenu.product) {
-			console.log("Edit product:", contextMenu.product);
-			// Открыть диалог редактирования
-		}
+		handleCloseContextMenu();
+	};
+
+	const handleDeleteProduct = () => {
 		handleCloseContextMenu();
 	};
 
 	return (
 		<TableContainer
 			component={Paper}
-			sx={{ border: "none", boxShadow: "none" }}>
+			sx={{ border: "none", boxShadow: "none", pl: "30px" }}>
 			<Table
 				sx={{ minWidth: 650 }}
 				aria-label="products table">
@@ -193,7 +208,13 @@ const ProductTable: React.FC<ProductTableProps> = ({ sortedData, selected, selec
 									</IconButton>
 									<IconButton
 										aria-label="more options"
-										onClick={(e) => handleContextMenu(e, product)}
+										onClick={(e) => {
+											setContextMenu({
+												mouseX: e.clientX + 2,
+												mouseY: e.clientY - 6,
+												product,
+											});
+										}}
 										sx={{ transform: "rotate(90deg)", color: "#B2B3B9", width: "32px", height: "32px", "&:focus": { outline: "none" } }}>
 										<MoreVert sx={{ border: "1px solid #B2B3B9", borderRadius: "50%" }} />
 									</IconButton>
@@ -206,13 +227,14 @@ const ProductTable: React.FC<ProductTableProps> = ({ sortedData, selected, selec
 					<TableRow>
 						<TableCell
 							colSpan={100}
-							sx={{ borderBottom: "none" }}>
+							sx={{ borderBottom: "none", padding: "16px 16px 11px" }}>
 							<Box
 								sx={{
 									display: "flex",
 									justifyContent: "space-between",
 									alignItems: "center",
-									mt: 2,
+									mt: "24px",
+									mb: "30px",
 									flexWrap: "nowrap",
 									whiteSpace: "nowrap",
 									minWidth: 0,
@@ -234,24 +256,10 @@ const ProductTable: React.FC<ProductTableProps> = ({ sortedData, selected, selec
 									</Typography>
 								</Typography>
 
-								<Pagination
-									count={Math.ceil(totalCount / 20)}
-									page={page + 1}
-									onChange={(_, newPage) => onPageChange(newPage - 1)}
-									color="primary"
-									sx={{
-										flexShrink: 0,
-										"& .MuiPaginationItem-root": {
-											display: "inline-flex",
-											minWidth: "32px",
-											height: "32px",
-											fontSize: "14px",
-										},
-										"& .MuiPaginationItem-page.Mui-selected": {
-											backgroundColor: "primary.main",
-											color: "white",
-										},
-									}}
+								<SimplePagination
+									currentPage={page}
+									totalPages={Math.ceil(totalCount / 20)}
+									onPageChange={(page) => onPageChange(page)}
 								/>
 							</Box>
 						</TableCell>
@@ -266,6 +274,11 @@ const ProductTable: React.FC<ProductTableProps> = ({ sortedData, selected, selec
 				anchorPosition={contextMenu.mouseY !== 0 && contextMenu.mouseX !== 0 ? { top: contextMenu.mouseY, left: contextMenu.mouseX } : undefined}
 				onClick={handleCloseContextMenu}>
 				<MenuItem onClick={handleEditProduct}>Редактировать</MenuItem>
+				<MenuItem
+					onClick={handleDeleteProduct}
+					sx={{ color: "error.main" }}>
+					Удалить
+				</MenuItem>
 			</Menu>
 		</TableContainer>
 	);

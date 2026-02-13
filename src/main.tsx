@@ -6,24 +6,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './react-query';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-// Font imports
-import '@fontsource/inter/400.css';
-import '@fontsource/inter/500.css';
-import '@fontsource/inter/700.css';
-import '@fontsource/cairo/index.css';
-import '@fontsource/cairo/400.css';
-import '@fontsource/cairo/500.css';
-import '@fontsource/cairo/700.css';
-import '@fontsource/cairo/900.css';
-import '@fontsource/open-sans/400.css';
-import '@fontsource/open-sans/500.css';
-import '@fontsource/open-sans/700.css';
-import '@fontsource/roboto-mono/400.css';
-import '@fontsource/roboto-mono/500.css';
-import '@fontsource/roboto-mono/700.css';
-import '@fontsource/roboto/400.css';
-import '@fontsource/roboto/500.css';
-import '@fontsource/roboto/700.css';
+import './fonts.css';
 import './index.css';
 import App from './App.tsx';
 
