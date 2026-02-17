@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Checkbox, IconButton, Box, MenuItem, Menu, Typography, TableFooter } from "@mui/material";
 import { Add, MoreVert } from "@mui/icons-material";
-import type { Product } from "../../types";
+import type { Product, ContextMenuState } from "../../types";
 import { ProductThumbnail } from "./ProductThumbnail";
 import { StockIndicator } from "./StockIndicator";
 import SimplePagination from "./SimplePagination";
@@ -24,11 +24,11 @@ const MAX_RAITING = 5;
 const ProductTable: React.FC<ProductTableProps> = ({ sortedData, selected, selectAllChecked, handleSelect, handleSelectAll, handleSort, getSortIndicator, handleDoubleClick, page, totalCount, onPageChange }) => {
 	const menuRef = useRef<HTMLDivElement>(null);
 
-	const [contextMenu, setContextMenu] = React.useState<{
-		mouseX: number;
-		mouseY: number;
-		product: Product | null;
-	}>({ mouseX: 0, mouseY: 0, product: null });
+	const [contextMenu, setContextMenu] = React.useState<ContextMenuState>({ mouseX: 0, mouseY: 0, product: null });
+
+	const handleCloseContextMenu = () => {
+		setContextMenu({ mouseX: 0, mouseY: 0, product: null });
+	};
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
@@ -42,10 +42,6 @@ const ProductTable: React.FC<ProductTableProps> = ({ sortedData, selected, selec
 			document.removeEventListener("click", handleClickOutside);
 		};
 	}, []);
-
-	const handleCloseContextMenu = () => {
-		setContextMenu({ mouseX: 0, mouseY: 0, product: null });
-	};
 
 	const handleEditProduct = () => {
 		handleCloseContextMenu();

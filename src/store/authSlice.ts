@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { AuthState } from '../types';
+import type { AuthState, LoginResponse } from '../types';
 
 
 const getInitialAuthState = (): AuthState => {
@@ -18,7 +18,7 @@ const getInitialAuthState = (): AuthState => {
         token,
         rememberMe: storedRememberMe === 'true',
       };
-    } catch (error) {
+    } catch (_: unknown) {
 
       localStorage.removeItem('authToken');
       sessionStorage.removeItem('authToken');
@@ -42,7 +42,7 @@ export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    loginSuccess: (state, action: PayloadAction<{ user: any; token: string; rememberMe: boolean }>) => {
+    loginSuccess: (state, action: PayloadAction<{ user: LoginResponse; token: string; rememberMe: boolean }>) => {
       const { user, token, rememberMe } = action.payload;
       
       state.isAuthenticated = true;

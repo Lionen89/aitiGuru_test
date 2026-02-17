@@ -75,3 +75,59 @@ export interface SortConfig {
   key: keyof Product;
   direction: 'asc' | 'desc';
 }
+
+export interface AddProductRequest {
+  title: string;
+  description: string;
+  price: number;
+  discountPercentage: number;
+  rating: number;
+  stock: number;
+  brand: string;
+  category: string;
+  thumbnail: string;
+  images: string[];
+  sku: string;
+  weight: number;
+  dimensions: {
+    width: number;
+    height: number;
+    depth: number;
+  };
+}
+
+export interface AddProductFormData {
+  title: string;
+  price: number;
+  brand: string;
+  sku: string;
+  description?: string;
+  category?: string;
+  stock?: number;
+  rating?: number;
+  weight?: number;
+}
+
+export interface ApiError {
+  message: string;
+  code?: string;
+  status?: number;
+}
+
+export interface ContextMenuState {
+  mouseX: number;
+  mouseY: number;
+  product: Product | null;
+}
+
+export interface SnackbarState {
+  open: boolean;
+  message: string;
+  severity: "success" | "error" | "info" | "warning";
+}
+
+export interface ActionHandlers {
+  handleEditProduct: (product: Product) => void;
+  handleDeleteProduct: (product: Product) => void;
+  handleDuplicateProduct: (product: Product) => void;
+}

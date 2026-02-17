@@ -34,10 +34,10 @@ const StyledButton = styled(Button)(({ theme }) => ({
 
 const Login: React.FC = () => {
 	const dispatch = useAppDispatch();
-	const [loading, setLoading] = useState(false);
+	const [loading, setLoading] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
-	const [rememberMe, setRememberMe] = useState(false);
-	const [showPassword, setShowPassword] = useState(false);
+	const [rememberMe, setRememberMe] = useState<boolean>(false);
+	const [showPassword, setShowPassword] = useState<boolean>(false);
 
 	const loginSchema = yup.object({
 		username: yup.string().required("Поле обязательно для заполнения"),
@@ -61,8 +61,10 @@ const Login: React.FC = () => {
 		try {
 			const userData = await authApi.login(data);
 			dispatch(loginSuccess({ user: userData, token: userData.token, rememberMe }));
-		} catch (err: any) {
-			setError(err.response?.data?.message || "Ошибка входа. Пожалуйста, попробуйте еще раз.");
+		} catch (err: unknown) {
+			const errorResponse = err as { response?: { data?: { message?: string } } };
+			const errorMessage = errorResponse?.response?.data?.message || "Ошибка входа. Пожалуйста, попробуйте еще раз.";
+			setError(errorMessage);
 			dispatch(loginFailure());
 		} finally {
 			setLoading(false);
@@ -70,7 +72,7 @@ const Login: React.FC = () => {
 	};
 
 	const handleClearField = (field: keyof LoginRequest) => {
-		setValue(field, "" as any);
+		setValue(field, "" as LoginRequest[keyof LoginRequest]);
 		clearErrors(field);
 	};
 

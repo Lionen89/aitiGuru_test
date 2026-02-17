@@ -9,10 +9,10 @@ interface SimplePaginationProps {
 
 export default function SimplePagination({ currentPage, totalPages, onPageChange }: SimplePaginationProps) {
 	const getPageNumbers = () => {
-		const pages = [];
-		const displayPage = currentPage + 1;
-		const start = Math.max(1, displayPage - 2);
-		const end = Math.min(totalPages, start + 4);
+		const pages: number[] = [];
+		const displayPage: number = currentPage + 1;
+		const start: number = Math.max(1, displayPage - 2);
+		const end: number = Math.min(totalPages, start + 4);
 
 		for (let i = start; i <= end; i++) {
 			pages.push(i);
@@ -20,7 +20,7 @@ export default function SimplePagination({ currentPage, totalPages, onPageChange
 		return pages;
 	};
 
-	const pages = getPageNumbers();
+	const pages: number[] = getPageNumbers();
 
 	return (
 		<Box sx={{ display: "flex", gap: "8px", alignItems: "center" }}>

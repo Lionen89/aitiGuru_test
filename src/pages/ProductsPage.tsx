@@ -6,16 +6,16 @@ import ProductBar from "../components/Products/ProductBar";
 import type { SortConfig } from "../types";
 
 const ProductsPage: React.FC = () => {
-	const [searchTerm, setSearchTerm] = useState(() => localStorage.getItem("productSearchTerm") || "");
+	const [searchTerm, setSearchTerm] = useState<string>(() => localStorage.getItem("productSearchTerm") || "");
 	const [sortConfig, setSortConfig] = useState<SortConfig | null>(() => {
 		const saved = localStorage.getItem("productSortConfig");
 		return saved ? JSON.parse(saved) : null;
 	});
-	const [page, setPage] = useState(() => {
+	const [page, setPage] = useState<number>(() => {
 		const saved = localStorage.getItem("productPage");
 		return saved ? parseInt(saved, 10) : 0;
 	});
-	const [showAddProduct, setShowAddProduct] = useState(false);
+	const [showAddProduct, setShowAddProduct] = useState<boolean>(false);
 
 	useEffect(() => {
 		localStorage.setItem("productSearchTerm", searchTerm);

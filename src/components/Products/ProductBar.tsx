@@ -12,7 +12,7 @@ interface ProductBarProps {
 }
 
 const useDebounce = (value: string, delay: number): string => {
-	const [debouncedValue, setDebouncedValue] = useState(value);
+	const [debouncedValue, setDebouncedValue] = useState<string>(value);
 
 	useEffect(() => {
 		const handler = setTimeout(() => {
@@ -29,9 +29,9 @@ const useDebounce = (value: string, delay: number): string => {
 
 function ProductBar({ searchTerm, onSearchChange }: ProductBarProps) {
 	const theme = useTheme();
-	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-	const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
-	const debouncedSearchTerm = useDebounce(localSearchTerm, 500);
+	const isMobile: boolean = useMediaQuery(theme.breakpoints.down("sm"));
+	const [localSearchTerm, setLocalSearchTerm] = useState<string>(searchTerm);
+	const debouncedSearchTerm: string = useDebounce(localSearchTerm, 500);
 
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
 	if (e.key === 'Enter') {

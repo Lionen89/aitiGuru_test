@@ -1,8 +1,7 @@
 import axios from 'axios';
-import type { LoginRequest, LoginResponse, ProductsResponse, Product } from '../types';
+import type { LoginRequest, LoginResponse, ProductsResponse, Product, AddProductRequest } from '../types';
 
 const API_BASE_URL = 'https://dummyjson.com';
-
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -18,7 +17,7 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error: any) => {
+  (error: unknown) => {
     return Promise.reject(error);
   }
 );
@@ -26,7 +25,7 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   (response: any) => response,
-  (error: any) => {
+  (error: unknown) => {
 
     return Promise.reject(error);
   }
@@ -69,25 +68,7 @@ export const productsApi = {
   },
 
 
-  addProduct: async (productData: {
-    title: string;
-    description: string;
-    price: number;
-    discountPercentage: number;
-    rating: number;
-    stock: number;
-    brand: string;
-    category: string;
-    thumbnail: string;
-    images: string[];
-    sku: string;
-    weight: number;
-    dimensions: {
-    width: number;
-    height: number;
-    depth: number;
-  };
-  }): Promise<Product> => {
+  addProduct: async (productData: AddProductRequest): Promise<Product> => {
 
     await new Promise(resolve => setTimeout(resolve, 1000));
     

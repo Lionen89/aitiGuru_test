@@ -21,13 +21,17 @@ interface ProductListProps {
 const ProductList: React.FC<ProductListProps> = ({ searchTerm, sortConfig: propSortConfig, page, onSort, onPageChange, onAddProductClick }) => {
 	const [localSortConfig, setLocalSortConfig] = useState<SortConfig | null>(propSortConfig);
 	const [selected, setSelected] = useState<number[]>([]);
-	const [selectAllChecked, setSelectAllChecked] = useState(false);
+	const [selectAllChecked, setSelectAllChecked] = useState<boolean>(false);
 	const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-	const [modalOpen, setModalOpen] = useState(false);
+	const [modalOpen, setModalOpen] = useState<boolean>(false);
+	const initialRender = React.useRef(true);
 
 	useEffect(() => {
-		setSelected([]);
-		setSelectAllChecked(false);
+		if (!initialRender.current) {
+			setSelected([]);
+			setSelectAllChecked(false);
+		}
+		initialRender.current = false;
 	}, [searchTerm]);
 
 	const { data, isLoading, isError, error } = useQuery({
@@ -58,7 +62,7 @@ const ProductList: React.FC<ProductListProps> = ({ searchTerm, sortConfig: propS
 
 	const sortedData = useMemo(() => {
 		if (!data?.products) return [];
-		let items = [...data.products];
+		const items = [...data.products];
 		if (activeSortConfig) {
 			items.sort((a, b) => {
 				if (a[activeSortConfig.key] < b[activeSortConfig.key]) return activeSortConfig.direction === "asc" ? -1 : 1;
@@ -84,7 +88,7 @@ const ProductList: React.FC<ProductListProps> = ({ searchTerm, sortConfig: propS
 
 	useEffect(() => {
 		setSelectAllChecked(sortedData.length > 0 && sortedData.length === selected.length);
-	}, [selected, sortedData]);
+	}, [selected.length, sortedData.length, sortedData]);
 
 	const handleDoubleClick = (product: Product) => {
 		setSelectedProduct(product);

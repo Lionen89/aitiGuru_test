@@ -2,8 +2,8 @@ import { Box } from "@mui/material";
 import React from "react";
 
 export const ProductThumbnail: React.FC<{ src?: string; alt: string }> = ({ src, alt }) => {
-	const [loaded, setLoaded] = React.useState(false);
-	const [error, setError] = React.useState(false);
+	const [loaded, setLoaded] = React.useState<boolean>(false);
+	const [error, setError] = React.useState<boolean>(false);
 
 	if (!src || error || !loaded) {
 		return (

@@ -5,7 +5,7 @@ import type { SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { productsApi } from "../../services/api";
-import type { Product } from "../../types";
+import type { Product, AddProductFormData } from "../../types";
 
 interface AddProductFormProps {
 	open: boolean;
@@ -13,35 +13,23 @@ interface AddProductFormProps {
 	onSuccess: (product: Product) => void;
 }
 
-interface AddProductFormData {
-	title: string;
-	price: number;
-	brand: string;
-	sku: string;
-	description?: string;
-	category?: string;
-	stock?: number;
-	rating?: number;
-	weight?: number;
-}
-
 const schema = yup.object({
 	title: yup.string().required("Наименование обязательно"),
 	price: yup.number().required("Цена обязательна").positive("Цена должна быть положительной").typeError("Цена должна быть числом"),
 	brand: yup.string().required("Вендор обязателен"),
 	sku: yup.string().required("Артикул обязателен"),
-	description: yup.string(),
-	category: yup.string(),
-	stock: yup.number().integer("Количество должно быть целым числом").min(0, "Количество не может быть отрицательным").typeError("Количество должно быть числом"),
-	rating: yup.number().min(0, "Оценка должна быть между 0 и 5").max(5, "Оценка должна быть между 0 и 5").typeError("Оценка должна быть числом"),
-	weight: yup.number().positive("Вес должен быть положительным").typeError("Вес должен быть числом"),
+	description: yup.string().optional(),
+	category: yup.string().optional(),
+	stock: yup.number().integer("Количество должно быть целым числом").min(0, "Количество не может быть отрицательным").typeError("Количество должно быть числом").optional(),
+	rating: yup.number().min(0, "Оценка должна быть между 0 и 5").max(5, "Оценка должна быть между 0 и 5").typeError("Оценка должна быть числом").optional(),
+	weight: yup.number().positive("Вес должен быть положительным").typeError("Вес должен быть числом").optional(),
 });
 
 const AddProductForm: React.FC<AddProductFormProps> = ({ open, onClose, onSuccess }) => {
-	const [loading, setLoading] = useState(false);
+	const [loading, setLoading] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
-	const [snackbarOpen, setSnackbarOpen] = useState(false);
-	const [snackbarMessage, setSnackbarMessage] = useState("");
+	const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+	const [snackbarMessage, setSnackbarMessage] = useState<string>("");
 	const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error" | "info" | "warning">("success");
 
 	const {
@@ -53,7 +41,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ open, onClose, onSucces
 		resolver: yupResolver(schema) as any,
 	});
 
-	const onSubmit: SubmitHandler<AddProductFormData> = async (data) => {
+	const onSubmit: SubmitHandler<AddProductFormData> = async (data: AddProductFormData) => {
 		setLoading(true);
 		setError(null);
 
